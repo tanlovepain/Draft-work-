@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import worker from './dist/server/index.js';
+const oldFetch=globalThis.fetch;
+let sent;
+globalThis.fetch=async (url,options)=>{sent={url,body:JSON.parse(options.body)};return new Response(JSON.stringify({id:'lead_test123'}),{status:201,headers:{'content-type':'application/json'}})};
+const env={WHOP_ACCOUNT_ID:'biz_test123',WHOP_API_ORIGIN:'https://api.whop.com',ASSETS:{fetch:()=>new Response('asset')}};
+const request=(body,origin='https://roofing.whop.site')=>new Request('https://roofing.whop.site/api/estimate',{method:'POST',headers:{origin,'content-type':'application/json'},body:JSON.stringify(body)});
+const valid={name:'Alex',email:'alex@example.com',phone:'5125550100',zip:'78701',service:'Roof repair',message:'Leak',consent:true};
+let response=await worker.fetch(request(valid),env);assert.equal(response.status,200);assert.deepEqual(await response.json(),{leadId:'lead_test123',service:'Roof repair'});assert.equal(sent.body.account_id,'biz_test123');assert.equal(sent.body.metadata.email,'alex@example.com');
+response=await worker.fetch(request({...valid,consent:false}),env);assert.equal(response.status,400);
+response=await worker.fetch(request(valid,'https://evil.example'),env);assert.equal(response.status,403);
+response=await worker.fetch(request({...valid,website:'spam'}),env);assert.equal(response.status,400);
+globalThis.fetch=oldFetch;
+console.log('PASS: Lead request, consent validation, origin check, honeypot. API response mocked; live Lead unverified.');

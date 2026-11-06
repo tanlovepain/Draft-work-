@@ -1,0 +1,22 @@
+{
+  "name": "ridgeline-roofing-whop",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build --outDir dist/client && WHOP_SERVER=1 vite build --ssr worker.js --outDir dist/server",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "*",
+    "@whop/cli": "0.34.1",
+    "@whop/elements-react": "*",
+    "react": "*",
+    "react-dom": "*",
+    "vite": "*"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.0"
+  }
+}
