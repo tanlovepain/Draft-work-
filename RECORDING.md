@@ -7,7 +7,7 @@ Use OBS or Loom, record at 1920×1080, and hide API keys, tokens, real customer 
 ## Suggested 4-minute recording
 1. 0:00–0:40: Show the LIVE whop.site address, hero, service prices, financing disclosure, and mobile layout.
 2. 0:40–1:40: Open the $500 deposit, show CheckoutElement/PaymentElement, express wallet option on a supported verified device/domain, and BrandingElement. Complete a real sandbox checkout. Show the verified test payment in Whop. Demonstrate explicit card storage consent and successful setup intent linked to the same customer/job.
-3. 1:40–2:20: Submit the estimate form with synthetic customer information. Switch to Whop and show the created Lead with matching details and ID. A local success toast alone is insufficient.
+3. 1:40–2:20: Sign in with a separate customer Whop account and submit the estimate form with synthetic information. Then sign in as the Momentum Daily owner, open `/#leads`, click “Load Whop Leads,” and show the created Lead with matching details and ID. The Whop dashboard has no Leads tab. A local success toast alone is insufficient.
 4. 2:20–3:15: Show a completed demo job, its approved total and $500 deposit credit. Create the remaining-balance invoice. Show its actual Whop invoice ID and manual-payment link or authorized sandbox auto-charge result. Avoid emailing real customers.
 5. 3:15–4:00: Show Whop event/network evidence for service_viewed, deposit_started, and estimate_requested. Show timestamps and account association. Console call-site logs alone are not delivery evidence. Briefly show company.js to demonstrate reusability.
 
