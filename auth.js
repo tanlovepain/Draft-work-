@@ -24,10 +24,15 @@ export async function completeWhopSignIn(){
   const pending=JSON.parse(sessionStorage.getItem(pendingKey)||'null');
   sessionStorage.removeItem(pendingKey);
   history.replaceState(null,'',`${url.pathname}${url.hash||'#estimate'}`);
-  if(url.searchParams.has('error'))throw Error('Whop sign-in could not be completed. Please try again.');
+  if(url.searchParams.has('error')){
+    const code=(url.searchParams.get('error')||'unknown').replace(/[^a-z_]/gi,'').slice(0,40);
+    throw Error(`Whop sign-in failed (${code}). Please try again.`);
+  }
   if(!pending||Date.now()-pending.started>600000||url.searchParams.get('state')!==pending.state)throw Error('Whop sign-in expired. Please try again.');
-  const response=await fetch(`${apiOrigin}/oauth/token`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({grant_type:'authorization_code',code:url.searchParams.get('code'),redirect_uri:`${url.origin}/`,client_id:clientId,code_verifier:pending.verifier})});
-  if(!response.ok)throw Error('Whop sign-in could not be completed.');
+  let response;
+  try{response=await fetch(`${apiOrigin}/oauth/token`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({grant_type:'authorization_code',code:url.searchParams.get('code'),redirect_uri:`${url.origin}/`,client_id:clientId,code_verifier:pending.verifier})});}
+  catch{throw Error('Whop sign-in failed: token request blocked by the browser.');}
+  if(!response.ok){const detail=await response.json().catch(()=>({}));const code=(detail.error||`HTTP_${response.status}`).replace(/[^a-z_0-9]/gi,'').slice(0,40);throw Error(`Whop sign-in failed (${code}).`);}
   const tokens=await response.json();
   if(!tokens.access_token)throw Error('Whop sign-in did not return an access token.');
   sessionStorage.setItem(tokenKey,tokens.access_token);
