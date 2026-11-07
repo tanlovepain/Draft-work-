@@ -5,18 +5,23 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build --outDir dist/client && WHOP_SERVER=1 vite build --ssr worker.js --outDir dist/server",
-    "preview": "vite preview --host 0.0.0.0"
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "smoke:sandbox": "node sandbox-smoke.mjs",
+    "deploy": "whop apps deploy",
+    "typecheck": "node --check worker.js"
   },
   "dependencies": {
     "@vitejs/plugin-react": "*",
-    "@whop/cli": "0.34.1",
     "@whop/elements-react": "*",
     "react": "*",
     "react-dom": "*",
     "vite": "*"
   },
   "devDependencies": {
-    "@playwright/test": "^1.65.0"
+    "@cloudflare/vite-plugin": "^1.67.0",
+    "@playwright/test": "^1.65.0",
+    "@whop/cli": "0.34.1",
+    "wrangler": "^4.158.0"
   }
 }
