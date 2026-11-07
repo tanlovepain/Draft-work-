@@ -1,6 +1,6 @@
 # Recording and submission checklist
 
-The site is live at https://ridgeline-roofing-momentum-2026.whop.site. Do not claim the full task is complete until a sandbox payment, form-created Lead, setup intent, final invoice, and delivered pixel events are recorded. Whop rejected `whop.app` as reserved; the task owner accepted `whop.site`.
+The site is live at https://ridgeline-roofing-momentum-2026.whop.site. Do not claim the full task is complete until a sandbox payment, setup intent, final invoice, and delivered pixel events are recorded. Whop rejected `whop.app` as reserved; the task owner accepted `whop.site`.
 
 Use OBS or Loom, record at 1920×1080, and hide API keys, tokens, real customer details, and account balances. Use only the currently documented Whop sandbox/test method; do not invent test card numbers or charge a real card.
 
