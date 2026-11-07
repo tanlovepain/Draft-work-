@@ -3,6 +3,7 @@ const clean=(value,max=100)=>typeof value==='string'?value.trim().slice(0,max):'
 export default {
  async fetch(request,env){
   const url=new URL(request.url);
+  if(url.pathname==='/api/deposit-status')return depositStatus(request,env,url);
   if(url.pathname==='/api/oauth/token')return exchangeToken(request,env,url);
   if(url.pathname==='/api/admin/leads')return listLeads(request,env,url);
   if(url.pathname!=='/api/estimate')return env.ASSETS.fetch(request);
@@ -80,4 +81,24 @@ async function listLeads(request,env,url){
   const data=await response.json();
   return json({leads:(data.data||[]).filter(x=>x.metadata?.source==='roofing_website').map(x=>({id:x.id,legacy_owner_record:x.user?.id===me.id,created_at:x.created_at,name:x.metadata?.name,email:x.metadata?.email,phone:x.metadata?.phone,zip:x.metadata?.zip,service:x.metadata?.service,message:x.metadata?.message}))});
  }catch{return json({error:'Could not load Leads'},502)}
+}
+
+async function depositStatus(request,env,url){
+ if(request.method!=='GET')return json({error:'Method not allowed'},405);
+ const id=url.searchParams.get('payment_id');
+ if(!/^pay_[A-Za-z0-9]+$/.test(id||''))return json({error:'Invalid payment reference'},400);
+ const sandbox=env.WHOP_ENVIRONMENT==='sandbox';
+ const origin=env.WHOP_API_ORIGIN||(sandbox?'https://sandbox-api.whop.com':'https://api.whop.com');
+ const key=sandbox?env.WHOP_SANDBOX_API_KEY:env.WHOP_API_KEY;
+ if(!key&&(sandbox||!env.APP_ID))return json({error:'Payment verification is not configured'},503);
+ const headers={'api-version-date':'2026-11-05-1'};if(key)headers.authorization=`Bearer ${key}`;
+ try{
+  const response=await fetch(`${origin}/api/v1/payments/${id}`,{headers});
+  if(!response.ok)return json({error:'Could not verify payment'},502);
+  const payment=await response.json();
+  const expectedAccount=env.WHOP_COMPANY_ID||env.WHOP_ACCOUNT_ID||(sandbox?'biz_QuP6gQdX9pBwCo':'biz_NjnUTht6pZas2V');
+  const expectedPlan=sandbox?'plan_YWhBgfNmWRY01':'plan_dCOI1yr7dhmFy';
+  const paid=payment.status==='paid'&&payment.variant_id===expectedPlan&&(!payment.account_id||payment.account_id===expectedAccount);
+  return json({paid});
+ }catch{return json({error:'Could not verify payment'},502)}
 }

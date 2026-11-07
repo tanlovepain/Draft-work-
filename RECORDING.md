@@ -1,17 +1,27 @@
-# Recording and submission checklist
+# Submission recording: record only after each check succeeds
 
-The site is live at https://ridgeline-roofing-momentum-2026.whop.site. Do not claim the full task is complete until a sandbox payment, setup intent, final invoice, and delivered pixel events are recorded. Whop rejected `whop.app` as reserved; the task owner accepted `whop.site`.
+Live website: https://ridgeline-roofing-momentum-2026.whop.site. The original brief said `whop.app`; the Whop CLI rejected that as reserved. Confirm the reviewer accepts `whop.site` before resubmitting. The website source is at https://github.com/tanlovepain/Draft-work-.
 
-Use OBS or Loom, record at 1920×1080, and hide API keys, tokens, real customer details, and account balances. Use only the currently documented Whop sandbox/test method; do not invent test card numbers or charge a real card.
+A failed checkout plus a new Customer record does **not** prove a paid order. Whop may create a customer when checkout starts. Show a payment whose status is `paid`/`succeeded` and a receipt or payment ID. A Lead is a separate `lead_...` record; show it in the Whop Leads API or the site's owner-only viewer. Do not count the owner-associated legacy Lead. A console message about `whop.track` proves only that the browser called it, so show delivered requests or Whop reporting.
 
-## Suggested 4-minute recording
-1. 0:00–0:40: Show the LIVE whop.site address, hero, service prices, financing disclosure, and mobile layout.
-2. 0:40–1:40: Open the $500 deposit, show CheckoutElement/PaymentElement, express wallet option on a supported verified device/domain, and BrandingElement. Complete a real sandbox checkout. Show the verified test payment in Whop. Demonstrate explicit card storage consent and successful setup intent linked to the same customer/job.
-3. 1:40–2:20: Sign in with a separate customer Whop account and submit the estimate form with synthetic information. Then sign in as the Momentum Daily owner, open `/#leads`, click “Load Whop Leads,” and show the created Lead with matching details and ID. The Whop dashboard has no Leads tab. A local success toast alone is insufficient.
-4. 2:20–3:15: Show a completed demo job, its approved total and $500 deposit credit. Create the remaining-balance invoice. Show its actual Whop invoice ID and manual-payment link or authorized sandbox auto-charge result. Avoid emailing real customers.
-5. 3:15–4:00: Show Whop event/network evidence for service_viewed, deposit_started, and estimate_requested. Show timestamps and account association. Console call-site logs alone are not delivery evidence. Briefly show company.js to demonstrate reusability.
+## Before recording
 
-Submit: live whop.site URL accepted by the task owner; GitHub repository or source ZIP excluding secrets/node_modules; accessible 3–5 minute recording; one paragraph accurately listing verified features.
+1. Deploy the latest GitHub commit to the live Whop Website. Reload the live URL and confirm the updated deposit flow displays **“Verifying deposit payment…”** after checkout completion. The GitHub push alone does not update the live site.
+2. Use a separate test buyer identity and the **sandbox** checkout for payment. Confirm the merchant, test plan, allowed payment method, sandbox account, and card data against Whop's current sandbox guide. The CLI runs against production; do not use it for a test charge. Try the whole sequence once before recording.
+3. Confirm the estimate request produces a **new** Lead ID for that buyer. Sign in as the owner only to view Leads.
+4. Have an approved demo project total, verified deposit payment ID, and successful setup intent ID for the same buyer. Use `final-invoice.mjs` first without a write flag to show its calculation. Create/send only the authorized sandbox final invoice, and verify its returned invoice ID and status in Whop.
+5. Confirm the three custom events reached Whop reporting or that their network requests completed successfully. Hide tokens, keys, emails, and real customer data before recording. If any required proof fails, fix it first; another video of the failure will not satisfy the brief.
 
-## Feature paragraph (use ONLY after every claim is verified)
-This reusable roofing website runs on Whop Websites and offers a $149 inspection, $500 project deposit, and $249 flat-rate service through Whop Payment Elements, express wallets, and required Whop branding. Estimate requests create Whop Leads. The deposit flow collects explicit consent and saves a payment method through a setup intent; the remaining project balance is collected through Whop Invoices with authorized auto-charge or manual payment. Whop tracking captures estimate_requested, service_viewed, and deposit_started, alongside automatic page-view and checkout events. Available financing methods are shown by Whop according to merchant and customer eligibility.
+## 3–5 minute screen recording script
+
+**0:00–0:35 — Site.** Start with the live Whop URL visible in the address bar. Show the hero, three prices ($149 inspection, $500 deposit, $249 flat-rate service), service area, financing callout, and mobile layout briefly. Say this is the reusable demo template.
+
+**0:35–1:40 — Successful payment.** Open the $500 deposit on the sandbox site. Show Whop CheckoutElement, Whop branding, and the express wallet option where the browser supports it. Complete the sandbox card checkout using Whop's documented test card. Show the payment ID and **paid/succeeded** status in Whop Payments. Do not show only the Customers list. Return to the deposit flow, opt in to card storage, finish the setup checkout, and show the `sint_...` ID and its succeeded status. If card setup fails, stop the recording attempt and troubleshoot.
+
+**1:40–2:25 — Lead.** Sign in as a separate customer Whop user. Submit the estimate form with synthetic details. Capture its success state. Sign in as the merchant owner, open `/#leads`, click **Load Whop Leads**, and show the matching new `lead_...` ID, timestamp, and request details. Show the Whop API response if the reviewer needs independent proof.
+
+**2:25–3:20 — Final invoice.** Show the approved demo total (for example $2,500), the verified $500 deposit credit, and the $2,000 final balance. Run the staff tool for the same buyer/payment/setup IDs, create the sandbox invoice, and show the actual `inv_...` ID and status in Whop. If using manual payment, show the hosted invoice payment link. If using auto-charge, show the successful charge and stored-method authorization. Never claim an unsent draft is a paid invoice.
+
+**3:20–4:15 — Events and source.** Trigger service_viewed by opening a service, deposit_started by opening the deposit, and estimate_requested by a successful estimate submission. Show the three delivered pixel requests or Whop event records with timestamps. Briefly show `company.js` for reusable branding and pricing. End with the GitHub source URL.
+
+Submit the live Whop URL, GitHub repo, 3–5 minute accessible recording, and one paragraph listing only features that you verified. Use OBS or Loom with readable browser zoom. Mask personal and secret data.

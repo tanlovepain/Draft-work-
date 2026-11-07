@@ -3,6 +3,7 @@ import worker from './dist/server/index.js';
 const oldFetch=globalThis.fetch;
 let sent;
 globalThis.fetch=async (url,options)=>{
+ if(url.includes('/payments/'))return new Response(JSON.stringify({status:'paid',variant_id:'plan_dCOI1yr7dhmFy',account_id:'biz_NjnUTht6pZas2V'}),{status:200,headers:{'content-type':'application/json'}});
  if(url.includes('/companies/'))return new Response(JSON.stringify({owner_user:{id:'user_owner123'}}),{status:200,headers:{'content-type':'application/json'}});
  if(url.endsWith('/users/me'))return new Response(JSON.stringify({id:options.headers.authorization==='Bearer owner_test'?'user_owner123':'user_visitor123'}),{status:200,headers:{'content-type':'application/json'}});
  if(url.endsWith('/oauth/token'))return new Response(JSON.stringify({access_token:'visitor_token',expires_in:3600}),{status:200,headers:{'content-type':'application/json'}});
@@ -26,5 +27,7 @@ const oauth=new Request('https://roofing.whop.site/api/oauth/token',{method:'POS
 response=await worker.fetch(oauth,env);assert.equal(response.status,200);assert.equal((await response.json()).access_token,'visitor_token');
 response=await worker.fetch(new Request('https://roofing.whop.site/api/admin/leads',{headers:{authorization:'Bearer visitor_test'}}),env);assert.equal(response.status,403);
 response=await worker.fetch(new Request('https://roofing.whop.site/api/admin/leads',{headers:{authorization:'Bearer owner_test'}}),env);assert.equal(response.status,200);assert.equal((await response.json()).leads[0].name,'Alex');
+response=await worker.fetch(new Request('https://roofing.whop.site/api/deposit-status?payment_id=pay_test123'),{...env,WHOP_COMPANY_ID:'biz_NjnUTht6pZas2V'});assert.equal(response.status,200);assert.equal((await response.json()).paid,true);
+response=await worker.fetch(new Request('https://roofing.whop.site/api/deposit-status?payment_id=bad'),env);assert.equal(response.status,400);
 globalThis.fetch=oldFetch;
 console.log('PASS: Authenticated Lead request, consent validation, origin check, honeypot. API response mocked.');
